@@ -1,54 +1,41 @@
-This is the doctest for the add_integer function.
+>>> add_integer = __import__('0-add_integer').add_integer
 
-Import the function:
+>>> add_integer(42, 4)
+46
 
-add_integer = import('0-add_integer').add_integer
+>>> add_integer(3, -5)
+-2
 
-Test with two positive integers:
+>>> add_integer(8.2, -2.0)
+6
 
-add_integer(1, 2)
-3
-
-Test with a positive and a negative integer:
-
-add_integer(100, -2)
-98
-
-Test with the default value for b:
-
-add_integer(2)
-100
-
-Test with a float and an integer:
-
-add_integer(100.3, -2)
-98
-
-Test with two floats (truncation is expected):
-
-add_integer(4.9, 5.1)
-9
-
-Test TypeError for a non-numeric second argument:
-
-add_integer(4, "School")
+>>> add_integer("salam", 5)
 Traceback (most recent call last):
-...
-TypeError: b must be an integer
-
-Test TypeError for a non-numeric first argument:
-
-add_integer(None)
-Traceback (most recent call last):
-...
 TypeError: a must be an integer
 
-Test with two negative numbers:
+>>> add_integer(8.762378691696962, 5)
+13
 
-add_integer(-50, -50)
--100
+>>> add_integer()
+Traceback (most recent call last):
+  File "./0-add_integer.py", line 24, in <module>
+    add_integer()
+TypeError: add_integer() missing 1 required positional argument: 'a'
 
-Test with zero:
+>>> add_integer(float('inf'), float('inf'))
+Traceback (most recent call last):
+  File "./0-add_integer.py", line 16, in add_integer
+    a = int(a)
+        ^^^^^^
+OverflowError: cannot convert float infinity to integer
 
-add_integer(0, 0)
-0
+>>> add_integer(2)
+100
+
+>>> math = __import__("math")
+>>> add_integer(2, math.nan)
+Traceback (most recent call last):
+  File "./0-add_integer.py", line 18, in add_integer
+    b = int(b)
+        ^^^^^^
+ValueError: cannot convert float NaN to integer
