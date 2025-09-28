@@ -17,5 +17,5 @@ class MyList(list):
         The original list object is not modified.
         """
         # The built-in sorted() function is used to return a new sorted list.
-        # This ensures the original list (self) remains unchanged, matching the expected output.
+        # This ensures the original list (self) remains unchanged.
         print(sorted(self))
