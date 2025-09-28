@@ -1,0 +1,61 @@
+>>> BaseGeometry = __import__('7-base_geometry').BaseGeometry
+>>> integer_validator = BaseGeometry.integer_validator
+
+>>> integer_validator = BaseGeometry().integer_validator
+>>> integer_validator("test", 10)
+>>> integer_validator("test", 1)
+>>> integer_validator("test", 0)
+Traceback (most recent call last):
+...
+ValueError: test must be greater than 0
+
+>>> integer_validator("test", -5)
+Traceback (most recent call last):
+...
+ValueError: test must be greater than 0
+
+>>> integer_validator("test", 3.14)
+Traceback (most recent call last):
+...
+TypeError: test must be an integer
+
+>>> integer_validator("test", "hello")
+Traceback (most recent call last):
+...
+TypeError: test must be an integer
+
+>>> geometry = BaseGeometry()
+>>> geometry.area()
+Traceback (most recent call last):
+...
+Exception: area() is not implemented
+
+>>> integer_validator()
+Traceback (most recent call last):
+...
+TypeError: integer_validator() missing 2 required positional arguments: 'name' and 'value'
+
+>>> geometry.integer_validator("age", (4,))
+Traceback (most recent call last):
+...
+TypeError: age must be an integer
+
+>>> geometry.integer_validator("age", True)
+Traceback (most recent call last):
+...
+TypeError: age must be an integer
+
+>>> geometry.integer_validator("age", [3])
+Traceback (most recent call last):
+...
+TypeError: age must be an integer
+
+>>> geometry.integer_validator("age", {3, 4})
+Traceback (most recent call last):
+...
+TypeError: age must be an integer
+
+>>> geometry.integer_validator("age", None)
+Traceback (most recent call last):
+...
+TypeError: age must be an integer
