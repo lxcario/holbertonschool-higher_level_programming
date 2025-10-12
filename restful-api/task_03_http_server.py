@@ -1,87 +1,84 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
-Module to implement a basic HTTP server using Python's http.server module,
-demonstrating endpoint routing and JSON response handling.
+A simple HTTP server built using Python's http.server module.
+
+Features:
+- Serves a greeting message at the root endpoint (/)
+- Serves JSON data at /data
+- Returns API status at /status
+- Returns API info at /info
+- Handles undefined endpoints with a 404 Not Found response
 """
-import http.server
+
 import json
-import sys
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-# Define the port the server will run on
-PORT = 8000
 
-class HTTPHandler(http.server.BaseHTTPRequestHandler):
-    """
-    Custom HTTP request handler that processes GET requests for different endpoints.
-    """
+class SimpleAPIHandler(BaseHTTPRequestHandler):
+    """Custom request handler for a simple RESTful API."""
 
     def do_GET(self):
-        """Method to handle all incoming GET requests and route them by path."""
-
-        # 1. Root endpoint (/)
-        if self.path == '/':
+        """Handle GET requests for different endpoints."""
+        # Root endpoint
+        if self.path == "/":
             self.send_response(200)
-            self.send_header('Content-type', 'text/plain')
+            self.send_header("Content-type", "text/plain")
             self.end_headers()
-            self.wfile.write('Hello, this is a simple API!'.encode('utf-8'))
+            self.wfile.write(b"Hello, this is a simple API!")
 
-        # 2. /data endpoint (Serving JSON)
-        elif self.path == '/data':
-            self.send_response(200)
-            # Set the header to indicate a JSON response
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            
+        # /data endpoint — return JSON data
+        elif self.path == "/data":
             data = {
                 "name": "John",
                 "age": 30,
                 "city": "New York"
             }
-            # Convert Python dict to JSON string and encode to bytes
-            self.wfile.write(json.dumps(data).encode('utf-8'))
-
-        # 3. /status endpoint
-        elif self.path == '/status':
+            json_data = json.dumps(data)
             self.send_response(200)
-            self.send_header('Content-type', 'text/plain')
+            self.send_header("Content-type", "application/json")
             self.end_headers()
-            self.wfile.write("OK".encode('utf-8'))
+            self.wfile.write(json_data.encode("utf-8"))
 
-        # 4. /info endpoint (Required for the expected output)
-        elif self.path == '/info':
+        # /status endpoint — return OK
+        elif self.path == "/status":
             self.send_response(200)
-            self.send_header('Content-type', 'application/json')
+            self.send_header("Content-type", "text/plain")
             self.end_headers()
-            
-            data = {
+            self.wfile.write(b"OK")
+
+        # /info endpoint — return API info in JSON
+        elif self.path == "/info":
+            info = {
                 "version": "1.0",
                 "description": "A simple API built with http.server"
             }
-            self.wfile.write(json.dumps(data).encode('utf-8'))
+            json_info = json.dumps(info)
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json_info.encode("utf-8"))
 
-        # 5. 404 Error handler (for all undefined paths)
+        # Undefined endpoint — return 404
         else:
             self.send_response(404)
-            self.send_header('Content-type', 'text/plain')
+            self.send_header("Content-type", "application/json")
             self.end_headers()
-            # FIX: Ensure content is exactly 'Not Found' to pass the test
-            self.wfile.write('Not Found'.encode('utf-8'))
+            message = {"error": "Endpoint not found"}
+            self.wfile.write(json.dumps(message).encode("utf-8"))
 
 
-if __name__ == '__main__':
-    """Server initialization and run loop."""
+def run(server_class=HTTPServer, handler_class=SimpleAPIHandler, port=8000):
+    """Run the HTTP server on the specified port."""
+    server_address = ("", port)
+    httpd = server_class(server_address, handler_class)
+    print(f"✅ Server running on port {port}... (http://localhost:{port})")
+    print("Press Ctrl+C to stop.")
     try:
-        server_address = ('', PORT)
-        httpd = http.server.HTTPServer(server_address, HTTPHandler)
-        print(f"Starting server on port {PORT}...")
-        
-        # This function runs the server indefinitely until interrupted (e.g., Ctrl+C)
         httpd.serve_forever()
-        
     except KeyboardInterrupt:
-        print("\nStopping server...")
+        print("\nServer stopped.")
         httpd.server_close()
-        sys.exit(0)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        sys.exit(1)
+
+
+if __name__ == "__main__":
+    run()
