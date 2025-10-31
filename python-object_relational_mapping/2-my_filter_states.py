@@ -31,7 +31,7 @@ if __name__ == '__main__':
         # Use %s placeholder for secure SQL injection prevention
         query = ("SELECT * FROM states "
                  "WHERE BINARY name = %s "
-                 "ORDER BY id ASC")
+                 "ORDER BY id ASC").format(state_name_search)
 
         # Execute the query, passing the search term as a tuple
         cursor.execute(query, (state_name_search,))
