@@ -1,61 +1,61 @@
 #!/usr/bin/python3
 """
-Lists all states from the database hbtn_0e_0_usa.
+A script that lists all states from the database hbtn_0e_0_usa.
 
-This script takes three command-line arguments:
-1. MySQL username
-2. MySQL password
-3. Database name
-
+It takes 3 arguments: mysql username, mysql password, and database name.
 It connects to a MySQL server running on localhost at port 3306.
-Results are displayed as tuples and sorted in ascending order by states.id.
+Results are sorted in ascending order by states.id.
+It uses the 'MySQLdb' module.
 """
-import MySQLdb
 import sys
+import MySQLdb
 
 if __name__ == "__main__":
-    
-    # Retrieve arguments: username, password, database name
+    # Ensure correct number of arguments are provided (4 including script name)
+    if len(sys.argv) != 4:
+        print("Usage: ./0-select_states.py <mysql_username> \
+              <mysql_password> <database_name>")
+        sys.exit(1)
+
+    # Retrieve arguments
     mysql_username = sys.argv[1]
     mysql_password = sys.argv[2]
     database_name = sys.argv[3]
 
-    db = None
-    cur = None
+    # Database connection parameters
+    host = "localhost"
+    port = 3306
 
     try:
-        # Establish a connection to the database
+        # Connect to the MySQL database
         db = MySQLdb.connect(
-            host="localhost",
+            host=host,
+            port=port,
             user=mysql_username,
             passwd=mysql_password,
-            db=database_name,
-            port=3306
+            db=database_name
         )
 
-        # Create a cursor object to execute SQL queries
+        # Create a cursor object
         cur = db.cursor()
 
-        # Execute the query to select all states, sorted by id
-        # Explicitly selecting 'id' and 'name' to satisfy strict output requirements
-        query = "SELECT id, name FROM states ORDER BY id ASC"
+        # SQL query to select all states and sort by id
+        query = "SELECT * FROM states ORDER BY id ASC"
+
+        # Execute the query
         cur.execute(query)
 
-        # Fetch all the results
+        # Fetch all the rows
         rows = cur.fetchall()
 
-        # Print each row exactly as a tuple
+        # Print the results
         for row in rows:
             print(row)
 
-    except MySQLdb.Error as e:
-        # General error handling for connection or query failure
-        # print(f"An error occurred: {e}", file=sys.stderr)
-        pass
-    finally:
-        # Ensure resources are closed gracefully, even if an exception occurred.
-        if cur is not None:
-            cur.close()
-        if db is not None:
-            db.close()
+        # Close the cursor and connection
+        cur.close()
+        db.close()
 
+    except MySQLdb.Error as e:
+        print(f"Error connecting to MySQL: {e}")
+        sys.exit(1)
